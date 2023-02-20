@@ -9,6 +9,7 @@ import ink.meodinger.lpfx.type.TransGroup
 import ink.meodinger.lpfx.util.color.toHexRGB
 import ink.meodinger.lpfx.util.component.withContent
 import ink.meodinger.lpfx.component.dialog.showError
+import ink.meodinger.lpfx.type.TransLabel
 import ink.meodinger.lpfx.util.doNothing
 import ink.meodinger.lpfx.util.property.transform
 
@@ -194,6 +195,43 @@ class CTreeMenu(
     }
     private val lDeleteItem = MenuItem(I18N["context.delete_label"])
 
+    private val lMoveToLabelHandler = EventHandler<ActionEvent> { event ->
+        @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
+        val item = items.get(0)
+        val labels = state.transFile.getTransList(state.currentPicName).map(TransLabel::index);
+//        val groups = state.transFile.groupList.map(TransGroup::name)
+//
+//        val dialog = ChoiceDialog(groups[0], groups).apply {
+//            initOwner(state.stage)
+//            title = I18N["context.move_to.dialog.title"]
+//            contentText =
+//                if (items.size == 1) I18N["context.move_to.dialog.header"]
+//                else I18N["context.move_to.dialog.header.pl"]
+//        }
+        val dialog = ChoiceDialog(labels[0], labels).apply {
+            initOwner(state.stage)
+            title = I18N["context.move_to_label.dialog.title"]
+            contentText = I18N["context.move_to_label.dialog.header"]
+        }
+        val choice = dialog.showAndWait()
+        if (!choice.isPresent) return@EventHandler
+//        val transGroup = state.transFile.getTransGroup(choice.get())
+        val labelAction= LabelAction(
+                ActionType.CHANGE, state,
+                state.currentPicName,
+                state.transFile.getTransLabel(state.currentPicName, item.transLabel.index),
+                newLabelIndex = choice.get()
+        )
+
+        val moveAction = FunctionAction(
+            { labelAction.commit(); state.controller.requestUpdateTree() },
+            { labelAction.revert(); state.controller.requestUpdateTree() }
+        )
+        state.doAction(moveAction)
+    }
+
+    private val lMoveToLabelItem = MenuItem(I18N["context.move_to_label"])
+
     // endregion
 
     init {
@@ -244,9 +282,11 @@ class CTreeMenu(
                 items.add(gDeleteItem)
             } else if (rootCount == 0 && groupCount == 0 && labelCount > 0) {
                 // label(s)
+                lMoveToLabelItem.setOnAction { lMoveToLabelHandler.handle(ActionEvent(selectedItems, lMoveToLabelItem)) }
                 lMoveToItem.setOnAction { lMoveToHandler.handle(ActionEvent(selectedItems, lMoveToItem)) }
                 lDeleteItem.setOnAction { lDeleteHandler.handle(ActionEvent(selectedItems, lDeleteItem)) }
 
+                items.add(lMoveToLabelItem)
                 items.add(lMoveToItem)
                 items.add(SeparatorMenuItem())
                 items.add(lDeleteItem)

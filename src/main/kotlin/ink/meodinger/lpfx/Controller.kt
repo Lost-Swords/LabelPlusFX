@@ -656,7 +656,7 @@ class Controller(private val state: State) {
                 KeyCode.RIGHT -> cPicBox.next()
                 else -> return@handler
             }
-
+            cLabelPane.fireEvent(keyEvent(it, code = KeyCode.DOWN, character = "", text = ""))
             it.consume() // Consume used event
         }
         cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, arrowKeyChangePicHandler)
