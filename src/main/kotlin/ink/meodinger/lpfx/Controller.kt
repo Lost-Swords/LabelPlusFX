@@ -616,7 +616,7 @@ class Controller(private val state: State) {
                 if (number == 0) {
                     // Start parse
                     numberBuilder.append(0)
-                } else if (state.transFileProperty().isNotNull.isValid && number in 1..state.transFile.groupCount) {
+                } else if (state.transFileProperty().isNotNull.value && number in 1..state.transFile.groupCount) {
                     // Try select
                     val index = number - 1
                     if (state.viewMode == ViewMode.GroupMode) {
@@ -631,7 +631,7 @@ class Controller(private val state: State) {
                 // Parsing
                 numberBuilder.append(number)
                 val index = numberBuilder.toString().toInt() - 1
-                if ( state.transFileProperty().isNotNull.isValid &&index in 0 until state.transFile.groupCount) {
+                if ( state.transFileProperty().isNotNull.value &&index in 0 until state.transFile.groupCount) {
                     // Try select
                     if (state.viewMode == ViewMode.GroupMode) {
                         cTreeView.selectGroup(state.transFile.groupList[index].name, clear = true, scrollTo = false)
