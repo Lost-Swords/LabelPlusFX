@@ -178,6 +178,7 @@ class CTreeMenu(
             { labelActions.forEach(Action::commit); state.controller.requestUpdateTree() },
             { labelActions.forEach(Action::revert); state.controller.requestUpdateTree() }
         )
+        view.selectLabel(items[0].transLabel.index, clear = true, scrollTo = true)
         state.doAction(moveAction)
     }
     private val lMoveToItem = MenuItem(I18N["context.move_to"])
@@ -198,16 +199,8 @@ class CTreeMenu(
     private val lMoveToLabelHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
         val item = items.get(0)
-        val labels = state.transFile.getTransList(state.currentPicName).map(TransLabel::index);
-//        val groups = state.transFile.groupList.map(TransGroup::name)
-//
-//        val dialog = ChoiceDialog(groups[0], groups).apply {
-//            initOwner(state.stage)
-//            title = I18N["context.move_to.dialog.title"]
-//            contentText =
-//                if (items.size == 1) I18N["context.move_to.dialog.header"]
-//                else I18N["context.move_to.dialog.header.pl"]
-//        }
+        val labels = state.transFile.getTransList(state.currentPicName).map(TransLabel::index)
+
         val dialog = ChoiceDialog(labels[0], labels).apply {
             initOwner(state.stage)
             title = I18N["context.move_to_label.dialog.title"]
@@ -228,6 +221,7 @@ class CTreeMenu(
             { labelAction.revert(); state.controller.requestUpdateTree() }
         )
         state.doAction(moveAction)
+        view.selectLabel(choice.get(), clear = true, scrollTo = true)
     }
 
     private val lMoveToLabelItem = MenuItem(I18N["context.move_to_label"])

@@ -12,6 +12,21 @@ TODO:
  - 备份文件上限（Next）
  - 保存specify（Next）
 
+# 2.3.3.1
+
+Fix
+
+- 尝试修复图片区数字快捷键报错
+
+Add
+
+- 选中右键树状图中的Label支持移动序号
+
+Change
+
+- 移动Label序号或分组后，定位在移动后的Label上
+- 切换图片时默认选中第一个Label
+
 # 2.3.3
 
 Fix
