@@ -666,7 +666,6 @@ class Controller(private val state: State) {
         }
 
         fun moveCurrLabelTo(direction: Int) {
-
             var itemIndex = getNextLabelItemIndex(cTreeView.selectionModel.selectedIndex, direction)
             if (itemIndex == NOT_FOUND) {
                 // if selected first and try getting previous, return last;
@@ -687,11 +686,11 @@ class Controller(private val state: State) {
             if (!(it.isControlDown || it.isMetaDown)) return@handler
 
             when (it.code) {
-                KeyCode.LEFT  -> cPicBox.back()
+                KeyCode.LEFT -> cPicBox.back()
                 KeyCode.RIGHT -> cPicBox.next()
                 else -> return@handler
             }
-            moveCurrLabelTo(direction = 1)
+            cTreeView.selectFirst()
             it.consume() // Consume used event
         }
         cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, arrowKeyChangePicHandler)
@@ -730,14 +729,22 @@ class Controller(private val state: State) {
             // transform
             if (it.isShiftDown) {
                 // Met the bounds, change picture
-                if (itemIndex == NOT_FOUND) cPicBox.back()
-                // Go to previous label
-                moveCurrLabelTo(direction = -1)
+                if (itemIndex == NOT_FOUND) {
+                    cPicBox.back()
+                    cTreeView.selectLast()
+                } else {
+                    // Go to previous label
+                    moveCurrLabelTo(direction = -1)
+                }
             } else {
                 // Met the bounds, change picture
-                if (itemIndex == NOT_FOUND) cPicBox.next()
-                // Go to previous label
-                moveCurrLabelTo(direction = 1)
+                if (itemIndex == NOT_FOUND) {
+                    cPicBox.next()
+                    cTreeView.selectFirst()
+                } else {
+                    // Go to previous label
+                    moveCurrLabelTo(direction = 1)
+                }
 
             }
         }

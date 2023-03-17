@@ -181,13 +181,21 @@ class CTreeView: TreeView<String>() {
         selectionModel.select(root)
         if (scrollTo) scrollTo(getRow(root))
     }
-    fun selectFirst(clear: Boolean, scrollTo: Boolean) : Int {
+    fun selectFirst(clear: Boolean = true, scrollTo: Boolean = true) : Int {
         if(labelItems.isEmpty()) {
             selectRoot(clear, scrollTo)
             return NOT_FOUND
         }
         selectLabel(labelItems[0].transLabel.index, clear, scrollTo)
         return labelItems[0].transLabel.index
+    }
+    fun selectLast(clear: Boolean = true, scrollTo: Boolean = true) : Int {
+        if(labelItems.isEmpty()) {
+            selectRoot(clear, scrollTo)
+            return NOT_FOUND
+        }
+        selectLabel(labelItems.last().transLabel.index, clear, scrollTo)
+        return labelItems.last().transLabel.index
     }
     fun selectGroup(groupName: String, clear: Boolean, scrollTo: Boolean) {
         // In IndexMode this is not available

@@ -9,6 +9,7 @@ import ink.meodinger.lpfx.type.TransGroup
 import ink.meodinger.lpfx.util.color.toHexRGB
 import ink.meodinger.lpfx.util.component.withContent
 import ink.meodinger.lpfx.component.dialog.showError
+import ink.meodinger.lpfx.options.Logger
 import ink.meodinger.lpfx.type.TransLabel
 import ink.meodinger.lpfx.util.doNothing
 import ink.meodinger.lpfx.util.property.transform
@@ -178,8 +179,9 @@ class CTreeMenu(
             { labelActions.forEach(Action::commit); state.controller.requestUpdateTree() },
             { labelActions.forEach(Action::revert); state.controller.requestUpdateTree() }
         )
-        view.selectLabel(items[0].transLabel.index, clear = true, scrollTo = true)
+        val index = items[0].transLabel.index
         state.doAction(moveAction)
+        view.selectLabel(index, clear = true, scrollTo = true)
     }
     private val lMoveToItem = MenuItem(I18N["context.move_to"])
     private val lDeleteHandler = EventHandler<ActionEvent> { event ->
