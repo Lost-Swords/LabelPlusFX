@@ -12,7 +12,7 @@ TODO:
  - 备份文件上限（Next）
  - 保存specify（Next）
 
-# 2.3.3.1
+# 2.3.3.2
 
 Fix
 
@@ -21,6 +21,7 @@ Fix
 Add
 
 - 选中右键树状图中的Label支持移动序号
+- 图片区添加QW切换图片的快捷键
 
 Change
 

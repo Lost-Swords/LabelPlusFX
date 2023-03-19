@@ -751,6 +751,22 @@ class Controller(private val state: State) {
         cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, enterKeyTransformerHandler)
         cTransArea.addEventHandler(KeyEvent.KEY_PRESSED, enterKeyTransformerHandler)
         Logger.info("Transformed Ctrl + Enter", "Controller")
+
+        val changePicHandler = EventHandler<KeyEvent> handler@{
+            if (it.isControlDown || it.isMetaDown || it.isShiftDown || it.isAltDown || it.code.isDigitKey)  return@handler
+            // Mark immediately when this event will be consumed
+            it.consume() // stop further propagation
+
+            when (it.code) {
+                KeyCode.Q -> cPicBox.back()
+                KeyCode.W -> cPicBox.next()
+                else -> return@handler
+            }
+            cTreeView.selectFirst()
+            it.consume() // Consume used event
+        }
+        cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, changePicHandler)
+        Logger.info("Transformed A/D", "Controller")
     }
 
     // Controller Methods
