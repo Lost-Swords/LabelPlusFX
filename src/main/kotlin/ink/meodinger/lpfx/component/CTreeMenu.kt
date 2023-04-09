@@ -179,9 +179,7 @@ class CTreeMenu(
             { labelActions.forEach(Action::commit); state.controller.requestUpdateTree() },
             { labelActions.forEach(Action::revert); state.controller.requestUpdateTree() }
         )
-        val index = items[0].transLabel.index
         state.doAction(moveAction)
-        view.selectLabel(index, clear = true, scrollTo = true)
     }
     private val lMoveToItem = MenuItem(I18N["context.move_to"])
     private val lDeleteHandler = EventHandler<ActionEvent> { event ->
@@ -200,6 +198,7 @@ class CTreeMenu(
 
     private val lMoveToLabelHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
+        // choose the first transLabel
         val item = items.get(0)
         val labels = state.transFile.getTransList(state.currentPicName).map(TransLabel::index)
 
@@ -223,10 +222,29 @@ class CTreeMenu(
             { labelAction.revert(); state.controller.requestUpdateTree() }
         )
         state.doAction(moveAction)
-        view.selectLabel(choice.get(), clear = true, scrollTo = true)
     }
 
     private val lMoveToLabelItem = MenuItem(I18N["context.move_to_label"])
+
+    private val lCopyLabelTextHandler = EventHandler<ActionEvent> { event ->
+        @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
+        // choose the first transLabel
+        val item = items.get(0)
+        view.copyLabelText(item.transLabel.index)
+    }
+
+    private val lCopyLabelTextItem = MenuItem(I18N["context.copy_label_text"])
+
+    private val lPasteLabelTextHandler = EventHandler<ActionEvent> { event ->
+        @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
+        // choose the first transLabel
+        val item = items.get(0)
+        view.pasteLabelText(item.transLabel.index,state)
+    }
+
+    private val lPasteLabelTextItem = MenuItem(I18N["context.paste_label_text"])
+
+
 
     // endregion
 
@@ -280,10 +298,15 @@ class CTreeMenu(
                 // label(s)
                 lMoveToLabelItem.setOnAction { lMoveToLabelHandler.handle(ActionEvent(selectedItems, lMoveToLabelItem)) }
                 lMoveToItem.setOnAction { lMoveToHandler.handle(ActionEvent(selectedItems, lMoveToItem)) }
+                lCopyLabelTextItem.setOnAction { lCopyLabelTextHandler.handle(ActionEvent(selectedItems, lCopyLabelTextItem)) }
+                lPasteLabelTextItem.setOnAction { lPasteLabelTextHandler.handle(ActionEvent(selectedItems, lPasteLabelTextItem)) }
                 lDeleteItem.setOnAction { lDeleteHandler.handle(ActionEvent(selectedItems, lDeleteItem)) }
 
                 items.add(lMoveToLabelItem)
                 items.add(lMoveToItem)
+                items.add(SeparatorMenuItem())
+                items.add(lCopyLabelTextItem)
+                items.add(lPasteLabelTextItem)
                 items.add(SeparatorMenuItem())
                 items.add(lDeleteItem)
             } else {

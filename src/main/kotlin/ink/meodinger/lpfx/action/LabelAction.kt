@@ -51,8 +51,6 @@ class LabelAction(
         if (newLabelIndex != NOT_FOUND) {
             builder.append("@index: ${targetTransLabel.index.pad(2)} -> ${index.pad(2)}; ")
             if (targetTransLabel.index  == index) return
-            val list = state.transFile.transMapObservable[targetPicName]
-                ?: throw IllegalArgumentException(String.format(I18N["exception.action.picture_not_found.s"], targetPicName))
             val transLabel = TransLabel(
                 index,
                 targetTransLabel.groupId,

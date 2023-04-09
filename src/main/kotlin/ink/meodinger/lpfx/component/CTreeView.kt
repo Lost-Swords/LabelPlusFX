@@ -1,6 +1,10 @@
 package ink.meodinger.lpfx.component
 
 import ink.meodinger.lpfx.*
+import ink.meodinger.lpfx.action.ActionType
+import ink.meodinger.lpfx.action.FunctionAction
+import ink.meodinger.lpfx.action.LabelAction
+import ink.meodinger.lpfx.options.Logger
 import ink.meodinger.lpfx.type.TransGroup
 import ink.meodinger.lpfx.type.TransLabel
 import ink.meodinger.lpfx.util.component.expandAll
@@ -13,6 +17,11 @@ import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.scene.control.*
+import javafx.scene.input.Clipboard
+import javafx.scene.input.ClipboardContent
+
+
+
 
 
 /**
@@ -68,6 +77,15 @@ class CTreeView: TreeView<String>() {
 
     private val groupItems: MutableList<CTreeGroupItem> = ArrayList()
     private val labelItems: MutableList<CTreeLabelItem> = ArrayList()
+//    private val copyTextProperty:  StringProperty = SimpleStringProperty(emptyString())
+//
+//    /**
+//     * Selected copyText
+//     */
+//    var copyText: String by copyTextProperty
+//        private set
+
+
 
     init {
         // Init
@@ -128,6 +146,7 @@ class CTreeView: TreeView<String>() {
 
         for ((groupId, transGroup) in groups.withIndex()) createGroupItem(transGroup, groupId)
         for (transLabel in labels) createLabelItem(transLabel)
+        selectLabel(selectedLabel, clear = true, scrollTo = true)
     }
     private fun createGroupItem(transGroup: TransGroup, groupId: Int) {
         val groupItem = CTreeGroupItem(transGroup)
@@ -222,6 +241,34 @@ class CTreeView: TreeView<String>() {
         if (scrollTo) scrollTo(getRow(items.first()))
     }
 
+    fun copyLabelText(labelIndex: Int) {
+        val item = labelItems.firstOrNull { it.transLabel.index == labelIndex } ?:return
+        val clipboard = Clipboard.getSystemClipboard()
+        val clipboardContent = ClipboardContent()
+        clipboardContent.putString(item.transLabel.text)
+        Logger.info("Copy text from the label which's num is $labelIndex", "CTreeView")
+        clipboard.setContent(clipboardContent)
+//        copyText = item.transLabel.text
+    }
+
+    fun pasteLabelText(labelIndex: Int, state: State) {
+        val item = labelItems.firstOrNull { it.transLabel.index == labelIndex } ?:return
+        val clipboard = Clipboard.getSystemClipboard()
+        if (!clipboard.hasString()) return
+        Logger.info("Paste text into the label which's num is $labelIndex", "CTreeView")
+        val labelAction= LabelAction(
+            ActionType.CHANGE, state,
+            state.currentPicName,
+            state.transFile.getTransLabel(state.currentPicName, item.transLabel.index),
+            newText = clipboard.string
+        )
+        val pasteAction = FunctionAction(
+            { labelAction.commit();},
+            { labelAction.revert();}
+        )
+        state.doAction(pasteAction)
+    }
+
     /**
      * This will also clear the selected-index
      */
@@ -235,6 +282,8 @@ class CTreeView: TreeView<String>() {
      * Request the TreeView to re-render. This function is useful
      * when some labels' group change in IndexMode.
      */
-    fun requestUpdate() { update() }
+    fun requestUpdate() {
+        update()
+    }
 
 }

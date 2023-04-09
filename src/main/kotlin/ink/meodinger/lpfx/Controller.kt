@@ -491,10 +491,12 @@ class Controller(private val state: State) {
         // This could clear the label-index related bindings like TransArea text
         state.currentPicNameProperty().addListener(onChange {
             // If switch picture in CTreeView, the fours on TreeCell will not clear automatically
-            // So we should manually clear it to make sure we start from the first label
-            cTreeView.selectFirst(clear = true, scrollTo = false)
-            // Clear here, because the already happened selection may change it
+            //clear selection
             state.currentLabelIndex = NOT_FOUND
+            // So we should manually clear it to make sure we start from the first label
+             cTreeView.selectFirst(clear = true, scrollTo = false)
+            // Clear here, because the already happened selection may change it
+//            state.currentLabelIndex = NOT_FOUND
         })
         Logger.info("Listened for current-pic-name change for clear label-index selection", "Controller")
 
@@ -577,7 +579,6 @@ class Controller(private val state: State) {
      */
     private fun transform() {
         Logger.info("Applying Transformations...", "Controller")
-
         // Transform tab press in CTreeView to ViewModeBtn click
         cTreeView.addEventFilter(KeyEvent.KEY_PRESSED) {
             if (it.code == KeyCode.TAB) {
@@ -599,6 +600,22 @@ class Controller(private val state: State) {
             }
         }
         Logger.info("Transformed Tab on CLabelPane", "Controller")
+
+        val changePicHandler = EventHandler<KeyEvent> handler@{
+            if (it.isControlDown || it.isMetaDown || it.isShiftDown || it.isAltDown || it.code.isDigitKey)  return@handler
+            // Mark immediately when this event will be consumed
+            it.consume() // stop further propagation
+
+            when (it.code) {
+                KeyCode.Q -> cPicBox.back()
+                KeyCode.W -> cPicBox.next()
+                else -> return@handler
+            }
+            cTreeView.selectFirst()
+            it.consume() // Consume used event
+        }
+        cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, changePicHandler)
+        Logger.info("Transformed A/D", "Controller")
 
         // Transform number key press to CTreeView select
         val numberBuilder = StringBuilder()
@@ -752,21 +769,22 @@ class Controller(private val state: State) {
         cTransArea.addEventHandler(KeyEvent.KEY_PRESSED, enterKeyTransformerHandler)
         Logger.info("Transformed Ctrl + Enter", "Controller")
 
-        val changePicHandler = EventHandler<KeyEvent> handler@{
-            if (it.isControlDown || it.isMetaDown || it.isShiftDown || it.isAltDown || it.code.isDigitKey)  return@handler
-            // Mark immediately when this event will be consumed
-            it.consume() // stop further propagation
 
+
+        val copyLabelHandler = EventHandler<KeyEvent> handler@{
+            if (!(it.isControlDown || it.isMetaDown)) return@handler
             when (it.code) {
-                KeyCode.Q -> cPicBox.back()
-                KeyCode.W -> cPicBox.next()
+                KeyCode.C -> cTreeView.copyLabelText(cTreeView.selectionModel.selectedIndex)
+                KeyCode.V -> cTreeView.pasteLabelText(cTreeView.selectionModel.selectedIndex,state)
                 else -> return@handler
             }
-            cTreeView.selectFirst()
             it.consume() // Consume used event
         }
-        cLabelPane.addEventHandler(KeyEvent.KEY_PRESSED, changePicHandler)
-        Logger.info("Transformed A/D", "Controller")
+        cTreeView.addEventHandler(KeyEvent.KEY_PRESSED, copyLabelHandler)
+        Logger.info("Transformed Ctrl + C/V", "Controller")
+//
+
+
     }
 
     // Controller Methods
