@@ -775,7 +775,7 @@ class Controller(private val state: State) {
             if (!(it.isControlDown || it.isMetaDown)) return@handler
             when (it.code) {
                 KeyCode.C -> cTreeView.copyLabelText(cTreeView.selectionModel.selectedIndex)
-                KeyCode.V -> cTreeView.pasteLabelText(cTreeView.selectionModel.selectedIndex,state)
+                KeyCode.V -> cTreeView.pasteLabelText(cTreeView.selectionModel.selectedIndices,state)
                 else -> return@handler
             }
             it.consume() // Consume used event

@@ -1,6 +1,7 @@
 package ink.meodinger.lpfx.component
 
 import ink.meodinger.lpfx.*
+import ink.meodinger.lpfx.action.Action
 import ink.meodinger.lpfx.action.ActionType
 import ink.meodinger.lpfx.action.FunctionAction
 import ink.meodinger.lpfx.action.LabelAction
@@ -227,8 +228,8 @@ class CTreeView: TreeView<String>() {
         if (scrollTo) scrollTo(getRow(item))
     }
     fun selectLabel(labelIndex: Int, clear: Boolean, scrollTo: Boolean) {
+        val item = labelItems.firstOrNull{ it.transLabel.index == labelIndex } ?:return
         if (clear) clearSelection()
-        val item = labelItems.first { it.transLabel.index == labelIndex }
 
         selectionModel.select(item)
         if (scrollTo) scrollTo(getRow(item))
@@ -246,25 +247,27 @@ class CTreeView: TreeView<String>() {
         val clipboard = Clipboard.getSystemClipboard()
         val clipboardContent = ClipboardContent()
         clipboardContent.putString(item.transLabel.text)
-        Logger.info("Copy text from the label which's num is $labelIndex", "CTreeView")
+        Logger.info("Copy text from the label of $labelIndex", "CTreeView")
         clipboard.setContent(clipboardContent)
 //        copyText = item.transLabel.text
     }
 
-    fun pasteLabelText(labelIndex: Int, state: State) {
-        val item = labelItems.firstOrNull { it.transLabel.index == labelIndex } ?:return
+    fun pasteLabelText(labelIndexs: List<Int>, state: State) {
+        val indexs = labelItems.map { it.transLabel.index }.filter { labelIndexs.any { i -> i == it } }
         val clipboard = Clipboard.getSystemClipboard()
-        if (!clipboard.hasString()) return
-        Logger.info("Paste text into the label which's num is $labelIndex", "CTreeView")
-        val labelAction= LabelAction(
-            ActionType.CHANGE, state,
-            state.currentPicName,
-            state.transFile.getTransLabel(state.currentPicName, item.transLabel.index),
-            newText = clipboard.string
-        )
+        if (!clipboard.hasString()||indexs.isEmpty()) return
+        Logger.info("Paste text into the labels of ${indexs.joinToString(separator = ",")}", "CTreeView")
+        val labelActions = indexs.map {
+            LabelAction(
+                ActionType.CHANGE, state,
+                state.currentPicName,
+                state.transFile.getTransLabel(state.currentPicName, it),
+                newText = clipboard.string
+            )
+        }
         val pasteAction = FunctionAction(
-            { labelAction.commit();},
-            { labelAction.revert();}
+            { labelActions.forEach(Action::commit) },
+            { labelActions.forEach(Action::revert) }
         )
         state.doAction(pasteAction)
     }

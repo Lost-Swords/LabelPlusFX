@@ -9,7 +9,6 @@ import ink.meodinger.lpfx.type.TransGroup
 import ink.meodinger.lpfx.util.color.toHexRGB
 import ink.meodinger.lpfx.util.component.withContent
 import ink.meodinger.lpfx.component.dialog.showError
-import ink.meodinger.lpfx.options.Logger
 import ink.meodinger.lpfx.type.TransLabel
 import ink.meodinger.lpfx.util.doNothing
 import ink.meodinger.lpfx.util.property.transform
@@ -196,16 +195,16 @@ class CTreeMenu(
     }
     private val lDeleteItem = MenuItem(I18N["context.delete_label"])
 
-    private val lMoveToLabelHandler = EventHandler<ActionEvent> { event ->
+    private val lMoveToIndexHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
         // choose the first transLabel
-        val item = items.get(0)
+        val item = items[0]
         val labels = state.transFile.getTransList(state.currentPicName).map(TransLabel::index)
 
         val dialog = ChoiceDialog(labels[0], labels).apply {
             initOwner(state.stage)
-            title = I18N["context.move_to_label.dialog.title"]
-            contentText = I18N["context.move_to_label.dialog.header"]
+            title = I18N["context.move_to_Index.dialog.title"]
+            contentText = I18N["context.move_to_index.dialog.header"]
         }
         val choice = dialog.showAndWait()
         if (!choice.isPresent) return@EventHandler
@@ -224,12 +223,12 @@ class CTreeMenu(
         state.doAction(moveAction)
     }
 
-    private val lMoveToLabelItem = MenuItem(I18N["context.move_to_label"])
+    private val lMoveToIndexItem = MenuItem(I18N["context.move_to_index"])
 
     private val lCopyLabelTextHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
         // choose the first transLabel
-        val item = items.get(0)
+        val item = items[0]
         view.copyLabelText(item.transLabel.index)
     }
 
@@ -238,8 +237,8 @@ class CTreeMenu(
     private val lPasteLabelTextHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
         // choose the first transLabel
-        val item = items.get(0)
-        view.pasteLabelText(item.transLabel.index,state)
+
+        view.pasteLabelText(items.map { it.transLabel.index },state)
     }
 
     private val lPasteLabelTextItem = MenuItem(I18N["context.paste_label_text"])
@@ -296,13 +295,13 @@ class CTreeMenu(
                 items.add(gDeleteItem)
             } else if (rootCount == 0 && groupCount == 0 && labelCount > 0) {
                 // label(s)
-                lMoveToLabelItem.setOnAction { lMoveToLabelHandler.handle(ActionEvent(selectedItems, lMoveToLabelItem)) }
+                lMoveToIndexItem.setOnAction { lMoveToIndexHandler.handle(ActionEvent(selectedItems, lMoveToIndexItem)) }
                 lMoveToItem.setOnAction { lMoveToHandler.handle(ActionEvent(selectedItems, lMoveToItem)) }
                 lCopyLabelTextItem.setOnAction { lCopyLabelTextHandler.handle(ActionEvent(selectedItems, lCopyLabelTextItem)) }
                 lPasteLabelTextItem.setOnAction { lPasteLabelTextHandler.handle(ActionEvent(selectedItems, lPasteLabelTextItem)) }
                 lDeleteItem.setOnAction { lDeleteHandler.handle(ActionEvent(selectedItems, lDeleteItem)) }
 
-                items.add(lMoveToLabelItem)
+                items.add(lMoveToIndexItem)
                 items.add(lMoveToItem)
                 items.add(SeparatorMenuItem())
                 items.add(lCopyLabelTextItem)
