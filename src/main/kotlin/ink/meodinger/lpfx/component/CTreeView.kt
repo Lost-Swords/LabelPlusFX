@@ -243,6 +243,8 @@ class CTreeView: TreeView<String>() {
     }
 
     fun copyLabelText(labelIndex: Int) {
+//        val indexes = labelItems.filter { labelIndexes.any { i -> i == it.transLabel.index } }
+//        if (indexes.isEmpty()) return
         val item = labelItems.firstOrNull { it.transLabel.index == labelIndex } ?:return
         val clipboard = Clipboard.getSystemClipboard()
         val clipboardContent = ClipboardContent()
@@ -252,12 +254,12 @@ class CTreeView: TreeView<String>() {
 //        copyText = item.transLabel.text
     }
 
-    fun pasteLabelText(labelIndexs: List<Int>, state: State) {
-        val indexs = labelItems.map { it.transLabel.index }.filter { labelIndexs.any { i -> i == it } }
+    fun pasteLabelsText(labelIndexes: Collection<Int>, state: State) {
+        val indexes = labelItems.map { it.transLabel.index }.filter { labelIndexes.any { i -> i == it } }
         val clipboard = Clipboard.getSystemClipboard()
-        if (!clipboard.hasString()||indexs.isEmpty()) return
-        Logger.info("Paste text into the labels of ${indexs.joinToString(separator = ",")}", "CTreeView")
-        val labelActions = indexs.map {
+        if (!clipboard.hasString()||indexes.isEmpty()) return
+        Logger.info("Paste text into the labels of ${indexes.joinToString(separator = ",")}", "CTreeView")
+        val labelActions = indexes.map {
             LabelAction(
                 ActionType.CHANGE, state,
                 state.currentPicName,

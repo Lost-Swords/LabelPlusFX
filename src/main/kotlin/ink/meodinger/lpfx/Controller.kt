@@ -774,9 +774,21 @@ class Controller(private val state: State) {
         val copyLabelHandler = EventHandler<KeyEvent> handler@{
             if (!(it.isControlDown || it.isMetaDown)) return@handler
             when (it.code) {
-                KeyCode.C -> cTreeView.copyLabelText(cTreeView.selectionModel.selectedIndex)
-                KeyCode.V -> cTreeView.pasteLabelText(cTreeView.selectionModel.selectedIndices,state)
-                else -> return@handler
+                KeyCode.C -> //                    cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
+                {
+                    cTreeView.copyLabelText(cTreeView.selectionModel.selectedIndex)
+                }
+                KeyCode.V -> {
+                    @Suppress("UNCHECKED_CAST")     val selectItems:Collection<CTreeLabelItem> =
+                        cTreeView.selectionModel.selectedIndices.map { cTreeView.getTreeItem(it)}
+                            .filter { it is CTreeLabelItem } as List<CTreeLabelItem>
+                    cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
+                }
+                else ->//                    cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
+                    //                    cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
+                {
+                    return@handler
+                }
             }
             it.consume() // Consume used event
         }

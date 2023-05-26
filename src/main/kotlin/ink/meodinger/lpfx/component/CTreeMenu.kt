@@ -203,7 +203,7 @@ class CTreeMenu(
 
         val dialog = ChoiceDialog(labels[0], labels).apply {
             initOwner(state.stage)
-            title = I18N["context.move_to_Index.dialog.title"]
+            title = I18N["context.move_to_index.dialog.title"]
             contentText = I18N["context.move_to_index.dialog.header"]
         }
         val choice = dialog.showAndWait()
@@ -238,7 +238,7 @@ class CTreeMenu(
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
         // choose the first transLabel
 
-        view.pasteLabelText(items.map { it.transLabel.index },state)
+        view.pasteLabelsText(items.map { it.transLabel.index },state)
     }
 
     private val lPasteLabelTextItem = MenuItem(I18N["context.paste_label_text"])
