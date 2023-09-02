@@ -776,10 +776,11 @@ class Controller(private val state: State) {
             when (it.code) {
                 KeyCode.C -> //                    cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
                 {
-                    cTreeView.copyLabelText(cTreeView.selectionModel.selectedIndex)
+                    @Suppress("UNCHECKED_CAST") val treeItem = cTreeView.getTreeItem(cTreeView.selectionModel.selectedIndex) as CTreeLabelItem
+                    cTreeView.copyLabelText(treeItem.transLabel.index)
                 }
                 KeyCode.V -> {
-                    @Suppress("UNCHECKED_CAST")     val selectItems:Collection<CTreeLabelItem> =
+                    @Suppress("UNCHECKED_CAST") val selectItems:Collection<CTreeLabelItem> =
                         cTreeView.selectionModel.selectedIndices.map { cTreeView.getTreeItem(it)}
                             .filter { it is CTreeLabelItem } as List<CTreeLabelItem>
                     cTreeView.pasteLabelsText(selectItems.map { it.transLabel.index },state)
