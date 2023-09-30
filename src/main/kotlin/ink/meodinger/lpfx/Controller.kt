@@ -495,6 +495,7 @@ class Controller(private val state: State) {
             state.currentLabelIndex = NOT_FOUND
             // So we should manually clear it to make sure we start from the first label
              cTreeView.selectFirst(clear = true, scrollTo = false)
+             cLabelPane.moveToLabel(cTreeView.selectedLabel)
             // Clear here, because the already happened selection may change it
 //            state.currentLabelIndex = NOT_FOUND
         })
