@@ -143,7 +143,13 @@ class Controller(private val state: State) {
                 // Opened and selected
                 val file = state.getPicFileNow()
                 if (file.exists()) {
-                    val imageByFX = Image(file.toURI().toURL().toString())
+                    var imageByFX = Image(file.toURI().toURL().toString())
+
+                    //if the image is too large,limit the size of image
+                    if(imageByFX.width > 5000 || imageByFX.height > 5000) {
+                        Logger.info("limit the size of image because `$file` is too large  ", "Controller")
+                        imageByFX = Image(file.toURI().toURL().toString(),5000.0,5000.0,true,true)
+                    }
 
                     if (!imageByFX.isError) {
                         imageByFX
