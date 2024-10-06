@@ -236,8 +236,6 @@ class CTreeMenu(
 
     private val lPasteLabelTextHandler = EventHandler<ActionEvent> { event ->
         @Suppress("UNCHECKED_CAST") val items = event.source as List<CTreeLabelItem>
-        // choose the first transLabel
-
         view.pasteLabelsText(items.map { it.transLabel.index },state)
     }
 

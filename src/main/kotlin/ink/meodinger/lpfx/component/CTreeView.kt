@@ -243,15 +243,12 @@ class CTreeView: TreeView<String>() {
     }
 
     fun copyLabelText(labelIndex: Int) {
-//        val indexes = labelItems.filter { labelIndexes.any { i -> i == it.transLabel.index } }
-//        if (indexes.isEmpty()) return
         val item = labelItems.firstOrNull { it.transLabel.index == labelIndex } ?:return
         val clipboard = Clipboard.getSystemClipboard()
         val clipboardContent = ClipboardContent()
         clipboardContent.putString(item.transLabel.text)
         Logger.info("Copy text from the label of $labelIndex", "CTreeView")
         clipboard.setContent(clipboardContent)
-//        copyText = item.transLabel.text
     }
 
     fun pasteLabelsText(labelIndexes: Collection<Int>, state: State) {
@@ -273,6 +270,7 @@ class CTreeView: TreeView<String>() {
         )
         state.doAction(pasteAction)
     }
+
 
     /**
      * This will also clear the selected-index

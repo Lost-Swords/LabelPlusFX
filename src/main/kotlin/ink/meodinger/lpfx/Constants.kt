@@ -16,7 +16,7 @@ import java.io.File
 /**
  * Current Version
  */
-val V: Version = Version(2, 3, 3)
+val V: Version = Version(2, 3, 4)
 
 /**
  * Default Filename Placeholder. It's Esperanto!
