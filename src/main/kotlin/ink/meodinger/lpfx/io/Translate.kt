@@ -36,7 +36,7 @@ private fun query(q: String, from: String, to: String): String {
     val key = if (Settings.useCustomBaiduKey) Settings.baiduTransLateKey else KEY
     val appId = if (Settings.useCustomBaiduKey) Settings.baiduTransLateAppId else ID
     val sign = md5("$appId$q$salt$key").lowercase()
-    Logger.info(Settings.baiduTransLateAppId+ ","+Settings.baiduTransLateKey, "Controller")
+    Logger.info("TranslateAppId:${Settings.baiduTransLateAppId},TranslateAppId:${Settings.baiduTransLateKey}", "Translate")
 
     return "$ROOT?q=${URLEncoder.encode(q, utf8Charset)}&from=$from&to=$to&appid=$appId&salt=$salt&sign=$sign"
 }
